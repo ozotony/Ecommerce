@@ -1,0 +1,285 @@
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "./store/user";
+
+import Mainnav from "./component/mainnav";
+import React, { useState, useEffect } from "react";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+
+export default function Home() {
+  const dispatch = useDispatch();
+  const [productname, setproductname] = useState();
+  const [groupcategory, setGroupcategory] = useState();
+  const [category, setCategory] = useState([]);
+
+  //let  user=''
+
+  // const count = useSelector((store) => store.user.user.user);
+  console.log("user2");
+  const [value, setValue] = useState();
+  const { user } = useSelector((state) => state.user);
+
+  let k2 = typeof window !== "undefined" ? localStorage.getItem("user") : "";
+
+  useEffect(() => {
+    setValue(user);
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/category/getcategory2", {
+          method: "GET",
+          headers: {
+            "content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        const data = await res.json();
+
+        console.log("data value");
+        console.log(data);
+
+        // const data2 = await res2.json()
+
+        //console.log('data')
+        //console.log(data)
+
+        if (data.message == "Not authenticated") {
+          //   alert(data.message)
+          router.push("/Logout");
+          return;
+        }
+        let arraydata = [];
+        let arraydata2 = {};
+
+        //console.log("server data")
+
+        // console.log(data)
+        //arraydata.push({ value: '', label: 'Chocolate'})
+        //const obj2 = { value: '', label: 'Select Subcategory'};
+        //arraydata.push(obj2)
+        // data.map(function(item, i){
+        // const obj = { value: item.id, label: item.Name};
+
+        let k3 = [];
+
+        for (let i = 0; i < data.length; i++) {
+          let k2 = {};
+          let k4 = [];
+
+          k2 = { value: data[i].id, label: data[i].catname };
+
+          for (let j = 0; j < data[i].subcategory.length; j++) {
+            k4.push({
+              value: data[i].subcategory[j].id,
+              label: data[i].subcategory[j].subname,
+            });
+
+            console.log("k2");
+            //  console.log(k2)
+          }
+          k2.items = k4;
+          k3.push(k2);
+        }
+
+        setCategory(k3);
+
+        //console.log("k3")
+        //console.log(k3)
+        // arraydata.push(obj)
+        //})
+
+        //console.log('arraydata')
+
+        //console.log(arraydata)
+
+        //  setValue(arraydata)
+      } catch (e) {}
+    };
+
+    fetchData();
+    // }
+  }, []);
+
+  //k2 = user['user']
+
+  //alert(k2)
+
+  console.log(k2);
+  if (k2) {
+    const obj = JSON.parse(k2);
+    console.log("user2");
+    console.log(obj.user.email);
+  }
+  const user2 = false;
+  return (
+    <>
+      <Mainnav value={value} />
+
+      <div>
+        <div
+          style={{
+            dispaly: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <InputText
+            style={{
+              alignSelf: "center",
+              width: "30%",
+              marginLeft: "30%",
+              marginTop: "30px",
+            }}
+            id="in"
+            value={productname}
+            placeholder="Enter Search"
+            onChange={(e) => setproductname(e.target.value)}
+          />
+
+          <Dropdown
+            placeholder="Select a Category"
+            style={{
+              flexGrow: "1",
+              alignSelf: "center",
+              marginTop: "30px",
+              width: "30%",
+            }}
+            value={groupcategory}
+            options={category}
+            onChange={(e) => setGroupcategory(e.value)}
+            optionLabel="label"
+            optionGroupLabel="label"
+            filter
+            showClear
+            optionGroupChildren="items"
+          />
+        </div>
+
+        <div
+          style={{
+            dispaly: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <button
+            style={{
+              flexGrow: "1",
+              alignSelf: "center",
+              marginTop: "30px",
+              marginLeft: "40%",
+              width: "40%",
+            }}
+            type="button"
+            className="btn btn-primary btn-block mb-4"
+          >
+            Search
+          </button>
+        </div>
+
+        <Head>
+          <title>Create Next App</title>
+          <meta name="description" content="Generated by create next app" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+
+        <main className={styles.main}>
+          <h1 className={styles.title}>
+            Welcome to <a href="https://nextjs.org">Next.js!</a>
+          </h1>
+
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td colSpan="2">Larry the Bird</td>
+                <td>@twitter</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className={styles.description}>
+            Get started by editing{" "}
+            <code className={styles.code}>pages/index.js</code>
+          </p>
+
+          <div className={styles.grid}>
+            <a href="https://nextjs.org/docs" className={styles.card}>
+              <h2>Documentation &rarr;</h2>
+              <p>Find in-depth information about Next.js features and API.</p>
+            </a>
+
+            <a href="https://nextjs.org/learn" className={styles.card}>
+              <h2>Learn &rarr;</h2>
+              <p>Learn about Next.js in an interactive course with quizzes!</p>
+            </a>
+
+            <a
+              href="https://github.com/vercel/next.js/tree/canary/examples"
+              className={styles.card}
+            >
+              <h2>Examples &rarr;</h2>
+              <p>Discover and deploy boilerplate example Next.js projects.</p>
+            </a>
+
+            <a
+              href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+              className={styles.card}
+            >
+              <h2>Deploy &rarr;</h2>
+              <p>
+                Instantly deploy your Next.js site to a public URL with Vercel.
+              </p>
+            </a>
+          </div>
+        </main>
+
+        <footer className={styles.footer}>
+          <a
+            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Powered by{" "}
+            <span className={styles.logo}>
+              <Image
+                src="/vercel.svg"
+                alt="Vercel Logo"
+                width={72}
+                height={16}
+              />
+            </span>
+          </a>
+        </footer>
+      </div>
+    </>
+  );
+}

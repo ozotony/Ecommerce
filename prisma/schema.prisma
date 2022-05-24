@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model test {
+  id          Int     @id @default(autoincrement())
+  description String? @db.VarChar(255)
+
+ 
+}
+
+
+model users {
+  id        Int       @id @default(autoincrement())
+  
+  email     String    @unique
+  password     String   
+  usertype      String ?
+  profile profile? @relation("ProfileOnUser") 
+  product     product[] 
+  updatedAt DateTime @default(now())
+}
+
+model profile {
+  id        Int       @id @default(autoincrement())
+  
+  
+  firstname   String    @db.VarChar(100)
+  surname   String    @db.VarChar(100)
+  phonenumber   String    @db.VarChar(100)
+  address   String    @db.VarChar(200)
+  userId Int 
+  user     users   @relation(name: "ProfileOnUser", fields: [userId], references: [id]) // name key can be omitted 
+
+
+  updatedAt DateTime @default(now())
+}
+
+
+model category {
+  id        Int       @id @default(autoincrement())
+  
+  product     product[] 
+  catname   String    @db.VarChar(200) @default("")
+  subcategory     subcategory[] 
+  
+  updatedAt DateTime @default(now())
+
+}
+
+model subcategory {
+  id        Int       @id @default(autoincrement())
+  
+  
+  subname   String    @db.VarChar(200) @default("")
+
+  item     item[] 
+  product     product[] 
+
+  categoryId Int 
+
+  category   category   @relation(fields: [categoryId], references: [id]) 
+  
+  updatedAt DateTime @default(now())
+}
+
+
+model item {
+  id        Int       @id @default(autoincrement())
+  
+  
+  itemname   String    @db.VarChar(200)   @default(" ")
+
+ 
+
+  subcategoryId Int 
+  subcategory   subcategory   @relation(fields: [subcategoryId], references: [id]) 
+  
+  updatedAt DateTime @default(now())
+}
+
+
+
+model state {
+  id        Int       @id @default(autoincrement())
+  
+  
+  statename   String    @db.VarChar(200)
+
+  area     area[] 
+  product     product[] 
+
+  
+  updatedAt DateTime @default(now())
+}
+
+model area {
+  id        Int       @id @default(autoincrement())
+  
+  
+  cityname   String    @db.VarChar(200)
+
+  stateId Int 
+
+  product     product[] 
+
+  state   state   @relation(fields: [stateId], references: [id]) 
+
+  
+  updatedAt DateTime @default(now())
+}
+
+model productstatus {
+  id        Int       @id @default(autoincrement())
+  prodname   String    @db.VarChar(200)
+  product product[] 
+
+}
+
+
+model product {
+  id        Int       @id @default(autoincrement())
+
+  price Decimal @db.Decimal(30,4)
+  
+  
+  name   String    @db.VarChar(200)
+  imageUrl String    @db.VarChar(200)
+  imageUrl2 String    @db.VarChar(200)
+  imageUrl3 String    @db.VarChar(200)
+
+
+  description  String    @db.VarChar(500)
+
+  productdetail     productdetail[] 
+  productviewed      productviewed[] 
+
+  productstatusId Int 
+  productstatus     productstatus   @relation( fields: [productstatusId], references: [id]) // name key can be omitted 
+
+
+  categoryId Int 
+
+  category   category   @relation(fields: [categoryId], references: [id]) 
+
+  subcategoryId Int 
+  subCategory   subcategory   @relation(fields: [subcategoryId], references: [id]) 
+
+  
+  stateId Int 
+  state  state  @relation(fields: [stateId], references: [id]) 
+
+  areaId Int 
+  area  area @relation(fields: [areaId], references: [id]) 
+
+
+  userId Int 
+
+  user   users   @relation(fields: [userId], references: [id]) 
+
+  
+  updatedAt DateTime @default(now())
+}
+
+
+model productviewed {
+  id        Int       @id @default(autoincrement())
+
+  productcount Int 
+
+  productId Int 
+
+  product   product   @relation(fields: [productId], references: [id]) 
+  
+  updatedAt DateTime @default(now())
+
+}
+
+
+
+
+model productdetail {
+  id        Int       @id @default(autoincrement())
+  
+  
+  
+  ImageUrl String    @db.VarChar(200)
+  ImageUrl2 String    @db.VarChar(200)
+  ImageUrl3 String    @db.VarChar(200)
+  ImageUrl4 String?    @db.VarChar(200)
+  Description  String    @db.VarChar(500)
+
+  productId Int 
+
+  product   product   @relation(fields: [productId], references: [id]) 
+
+  
+  
+  updatedAt DateTime @default(now())
+}
+
+
+
+
+
+
+
+
